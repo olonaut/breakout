@@ -13,6 +13,8 @@ namespace Breakout
         SpriteBatch spriteBatch;
         Texture2D platform;
         Texture2D ball;
+        Vector2 platform_pos;
+        Vector2 ball_pos;
 
         public Game1()
         {
@@ -28,8 +30,7 @@ namespace Breakout
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Height-8,graphics.GraphicsDevice.Viewport.Width/2);
             base.Initialize();
         }
 
@@ -41,6 +42,9 @@ namespace Breakout
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            platform = this.Content.Load<Texture2D>("platform_128");
+            // ball = this.Content.Load<Texture2D>("ball_64");    //TODO: Create ball texture;
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -51,6 +55,8 @@ namespace Breakout
         /// </summary>
         protected override void UnloadContent()
         {
+            platform.Dispose();
+            ball.Dispose();
             // TODO: Unload any non ContentManager content here
         }
 
