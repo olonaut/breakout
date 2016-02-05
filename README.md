@@ -6,13 +6,13 @@ If anyone wants to help me with that, feel free. But if you push code, please do
 
 Planned are:
 ##Basic Gameplay mechanics:
-*Collision with Platform
-*Collision with Walls, Celing
-*Collision with destructable objects (hereby referred to as blocks)
-*Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
-*Blocks destroyed __AFTER__ ball bounces off them.
+* Collision with Platform
+* Collision with Walls, Celing
+* Collision with destructable objects (hereby referred to as blocks)
+* Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
+* Blocks destroyed __AFTER__ ball bounces off them.
 
 ##"Maybe if I have time" modular features:
-*Controller Support (Optimised for Xbox 360)
-*Sound
-*Powerups maybe?
+* Controller Support (Optimised for Xbox 360)
+* Sound
+* Powerups maybe?
