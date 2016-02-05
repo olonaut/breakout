@@ -14,5 +14,6 @@ Planned are:
 
 ##"Maybe if I have time" modular features:
 * Controller Support (Optimised for Xbox 360)
+* Controller Rumbles a bit when Ball hits platform
 * Sound
 * Powerups maybe?
