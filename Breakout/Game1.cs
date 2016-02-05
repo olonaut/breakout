@@ -11,6 +11,8 @@ namespace Breakout
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D platform;
+        Texture2D ball;
 
         public Game1()
         {
