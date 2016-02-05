@@ -3,6 +3,7 @@ Simple Breakout Game made in C# using the MonoGame SDK
 
 So I was trying to learn MonoGame/C# and got the Idea to try making a simple Breakout game.
 If anyone wants to help me with that, feel free. But if you push code, please document what you are doing, becuase I am quite a noob. 
+The Game is meant to be played in windows mode, on a fixed resolution. This may change in the future, yet it is the current state to save time drawing out Hi-Res textures.
 
 Planned are:
 ##Basic Gameplay mechanics:
