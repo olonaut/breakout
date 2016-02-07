@@ -56,7 +56,7 @@ namespace Breakout
         protected override void UnloadContent()
         {
             platform.Dispose();
-            ball.Dispose();
+            //ball.Dispose();
             // TODO: Unload any non ContentManager content here
         }
 
@@ -84,6 +84,10 @@ namespace Breakout
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(platform, platform_pos);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
