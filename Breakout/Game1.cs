@@ -30,7 +30,7 @@ namespace Breakout
         /// </summary>
         protected override void Initialize()
         {
-            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Height-8,graphics.GraphicsDevice.Viewport.Width/2);
+            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
             base.Initialize();
         }
 
