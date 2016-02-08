@@ -15,6 +15,7 @@ namespace Breakout
         Texture2D ball;
         Vector2 platform_pos;
         Vector2 ball_pos;
+        Color[] balldata;
 
         public Game1()
         {
@@ -31,6 +32,7 @@ namespace Breakout
         protected override void Initialize()
         {
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
+            ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
         }
 
@@ -43,6 +45,12 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             platform = this.Content.Load<Texture2D>("platform_128");
+
+            //Load Ball Data
+            balldata = new Color[20 * 20];
+            for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
+            ball.SetData(balldata);
+
             // ball = this.Content.Load<Texture2D>("ball_64");    //TODO: Create ball texture;
 
 
