@@ -32,6 +32,7 @@ namespace Breakout
         protected override void Initialize()
         {
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
+            ball_pos = new Vector2(50,50);
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
         }
@@ -95,6 +96,7 @@ namespace Breakout
 
             spriteBatch.Begin();
             spriteBatch.Draw(platform, platform_pos);
+            spriteBatch.Draw(ball, ball_pos);
             spriteBatch.End();
 
             base.Draw(gameTime);
