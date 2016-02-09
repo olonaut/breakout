@@ -12,6 +12,7 @@ namespace Breakout
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState kbstate;
+        GamePadState padstate;
         Texture2D platform;
         Texture2D ball;
         Vector2 platform_pos;
@@ -67,7 +68,7 @@ namespace Breakout
         protected override void UnloadContent()
         {
             platform.Dispose();
-            //ball.Dispose();
+            ball.Dispose();
             // TODO: Unload any non ContentManager content here
         }
 
@@ -89,6 +90,23 @@ namespace Breakout
             else { 
                 if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 5;
                 if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
+            }
+
+            padstate = GamePad.GetState(PlayerIndex.One);
+            if(padstate.DPad.Left == ButtonState.Pressed | padstate.DPad.Right == ButtonState.Pressed)
+            {
+                if (padstate.DPad.Left == ButtonState.Pressed) platform_pos.X -= 10;
+                if (padstate.DPad.Right == ButtonState.Pressed) platform_pos.X += 10;
+            }
+            else
+            {
+                if (GamePad.GetCapabilities(PlayerIndex.One).HasRightXThumbStick)
+                {
+                    float xfloat = padstate.ThumbSticks.Right.X * 10;
+                    int xint = (int)xfloat;
+                    platform_pos.X += xint;
+                         
+                }
             }
             // TODO: Add your update logic here
 
