@@ -11,11 +11,13 @@ namespace Breakout
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        KeyboardState kbstate;
         Texture2D platform;
         Texture2D ball;
         Vector2 platform_pos;
         Vector2 ball_pos;
         Color[] balldata;
+        bool isstuck; // for determening whether or not the ball is stuck to the platform.
 
         public Game1()
         {
@@ -35,6 +37,7 @@ namespace Breakout
             ball_pos = new Vector2(50,50);
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
+            isstuck = false;
         }
 
         /// <summary>
@@ -46,7 +49,6 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             platform = this.Content.Load<Texture2D>("platform_128");
-
             //Load Ball Data
             balldata = new Color[20 * 20];
             for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
@@ -76,9 +78,18 @@ namespace Breakout
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
+            kbstate = Keyboard.GetState();
+            if(kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
+            {
+                if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 10;
+                if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 10;
+            }
+            else { 
+                if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 5;
+                if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
