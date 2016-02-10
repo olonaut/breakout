@@ -100,13 +100,30 @@ namespace Breakout
             }
             else
             {
+                float xfloatright = padstate.ThumbSticks.Right.X * 10;
+                int xintright = (int)xfloatright;
+                float xfloatleft = padstate.ThumbSticks.Left.X * 10;
+                int xintleft = (int)xfloatleft;
+
+                System.Diagnostics.Debug.WriteLine("left stick: " + xintleft + "; right stick: " + xintright);
+
                 if (GamePad.GetCapabilities(PlayerIndex.One).HasRightXThumbStick)
                 {
-                    float xfloat = padstate.ThumbSticks.Right.X * 10;
-                    int xint = (int)xfloat;
-                    if (xint < 0) if(platform_pos.X > 0) platform_pos.X += xint;
-                    if(xint > 0) if(platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xint;
+                    if (xintleft == 0)
+                    { 
+                        if (xintright < 0) if (platform_pos.X > 0) platform_pos.X += xintright;
+                        if (xintright > 0) if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xintright;
+                    }
                 }
+                if (GamePad.GetCapabilities(PlayerIndex.One).HasLeftXThumbStick)
+                {
+                    if (xintright == 0)
+                    {
+                        if (xintleft < 0) if (platform_pos.X > 0) platform_pos.X += xintleft;
+                        if (xintleft > 0) if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xintleft;
+                    }
+                }
+
             }
             // TODO: Add your update logic here
 
