@@ -81,6 +81,8 @@ namespace Breakout
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
+
+            //Controlls
             kbstate = Keyboard.GetState();
             if(kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
             {
@@ -125,7 +127,14 @@ namespace Breakout
                 }
 
             }
-            // TODO: Add your update logic here
+
+
+            //Ball Stick thing
+            if (!isstuck)
+            {
+                ball_pos.Y = platform_pos.Y - ball.Height;
+                ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
+            }
 
             base.Update(gameTime);
         }
