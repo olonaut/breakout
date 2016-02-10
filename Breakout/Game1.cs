@@ -17,9 +17,9 @@ namespace Breakout
         Texture2D ball;
         Vector2 platform_pos;
         Vector2 ball_pos;
-        Color[] balldata;
+        
+        Texture2D[] bricks; 
         bool isstuck; // for determening whether or not the ball is stuck to the platform.
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -51,10 +51,10 @@ namespace Breakout
             spriteBatch = new SpriteBatch(GraphicsDevice);
             platform = this.Content.Load<Texture2D>("platform_128");
             //Load Ball Data
+            Color[] balldata;
             balldata = new Color[20 * 20];
             for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
             ball.SetData(balldata);
-
             // ball = this.Content.Load<Texture2D>("ball_64");    //TODO: Create ball texture;
 
 
@@ -84,19 +84,19 @@ namespace Breakout
             kbstate = Keyboard.GetState();
             if(kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
             {
-                if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 10;
-                if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 10;
+                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 10;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 10;
             }
-            else { 
-                if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 5;
-                if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
+            else {
+                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 5;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
             }
 
             padstate = GamePad.GetState(PlayerIndex.One);
             if(padstate.DPad.Left == ButtonState.Pressed | padstate.DPad.Right == ButtonState.Pressed)
             {
-                if (padstate.DPad.Left == ButtonState.Pressed) platform_pos.X -= 10;
-                if (padstate.DPad.Right == ButtonState.Pressed) platform_pos.X += 10;
+                if (platform_pos.X > 0) if (padstate.DPad.Left == ButtonState.Pressed) platform_pos.X -= 10;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.DPad.Right == ButtonState.Pressed) platform_pos.X += 10;
             }
             else
             {
@@ -104,8 +104,8 @@ namespace Breakout
                 {
                     float xfloat = padstate.ThumbSticks.Right.X * 10;
                     int xint = (int)xfloat;
-                    platform_pos.X += xint;
-                         
+                    if (xint < 0) if(platform_pos.X > 0) platform_pos.X += xint;
+                    if(xint > 0) if(platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xint;
                 }
             }
             // TODO: Add your update logic here
