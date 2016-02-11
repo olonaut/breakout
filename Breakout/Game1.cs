@@ -17,8 +17,7 @@ namespace Breakout
         Texture2D ball;
         Vector2 platform_pos;
         Vector2 ball_pos;
-        
-        Texture2D[] bricks; 
+        Brick[] bricks;
         bool isstuck; // for determening whether or not the ball is stuck to the platform.
         public Game1()
         {
@@ -39,6 +38,8 @@ namespace Breakout
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
             isstuck = false;
+
+            bricks = new Brick[5*3];
         }
 
         /// <summary>
