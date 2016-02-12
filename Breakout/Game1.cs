@@ -19,6 +19,7 @@ namespace Breakout
         Vector2 ball_pos;
         Brick[] bricks;
         bool isstuck; // for determening whether or not the ball is stuck to the platform.
+        int brickammount;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,7 +40,6 @@ namespace Breakout
             base.Initialize();
             isstuck = false;
 
-            bricks = new Brick[5*3];
         }
 
         /// <summary>
@@ -52,11 +52,20 @@ namespace Breakout
             spriteBatch = new SpriteBatch(GraphicsDevice);
             platform = this.Content.Load<Texture2D>("platform_128");
             //Load Ball Data
-            Color[] balldata;
-            balldata = new Color[20 * 20];
+            Color[] balldata = new Color[20 * 20];
             for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
             ball.SetData(balldata);
-            // ball = this.Content.Load<Texture2D>("ball_64");    //TODO: Create ball texture;
+
+            brickammount = 9;
+
+
+            Color brickcolor = Color.Red;
+            System.Diagnostics.Debug.WriteLine("creating " + brickammount + " bricks.");
+            bricks = new Brick[brickammount];
+            for (int i = 0; i < bricks.Length; i++)
+            {
+            bricks[i] = new Brick(graphics,(85*i) + (5 * i),0,85,15,brickcolor);
+            }
 
 
             // TODO: use this.Content to load your game content here
@@ -108,7 +117,7 @@ namespace Breakout
                 float xfloatleft = padstate.ThumbSticks.Left.X * 10;
                 int xintleft = (int)xfloatleft;
 
-                System.Diagnostics.Debug.WriteLine("left stick: " + xintleft + "; right stick: " + xintright);
+            //    System.Diagnostics.Debug.WriteLine("left stick: " + xintleft + "; right stick: " + xintright);
 
                 if (GamePad.GetCapabilities(PlayerIndex.One).HasRightXThumbStick)
                 {
@@ -148,11 +157,14 @@ namespace Breakout
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-
             spriteBatch.Begin();
             spriteBatch.Draw(platform, platform_pos);
             spriteBatch.Draw(ball, ball_pos);
+            for(int i = 0; i < bricks.Length; i++)
+            {
+                spriteBatch.Draw(bricks[i].texture, bricks[i].position);
+ //             System.Diagnostics.Debug.WriteLine("drawing brick " + i + "at pos " + bricks[i].position.ToString());
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
