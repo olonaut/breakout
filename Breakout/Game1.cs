@@ -94,7 +94,13 @@ namespace Breakout
 
             //Controlls
             kbstate = Keyboard.GetState();
-            if(kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
+            float xfloatright = padstate.ThumbSticks.Right.X * 10;
+            int xintright = (int)xfloatright;
+            float xfloatleft = padstate.ThumbSticks.Left.X * 10;
+            int xintleft = (int)xfloatleft;
+            padstate = GamePad.GetState(PlayerIndex.One);
+
+            if (kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
             {
                 if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 10;
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 10;
@@ -104,21 +110,13 @@ namespace Breakout
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
             }
 
-            padstate = GamePad.GetState(PlayerIndex.One);
-            if(padstate.DPad.Left == ButtonState.Pressed | padstate.DPad.Right == ButtonState.Pressed)
+            if (padstate.DPad.Left == ButtonState.Pressed | padstate.DPad.Right == ButtonState.Pressed | kbstate.IsKeyDown(Keys.A) | kbstate.IsKeyDown(Keys.D))
             {
                 if (platform_pos.X > 0) if (padstate.DPad.Left == ButtonState.Pressed) platform_pos.X -= 10;
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.DPad.Right == ButtonState.Pressed) platform_pos.X += 10;
             }
             else
             {
-                float xfloatright = padstate.ThumbSticks.Right.X * 10;
-                int xintright = (int)xfloatright;
-                float xfloatleft = padstate.ThumbSticks.Left.X * 10;
-                int xintleft = (int)xfloatleft;
-
-            //    System.Diagnostics.Debug.WriteLine("left stick: " + xintleft + "; right stick: " + xintright);
-
                 if (GamePad.GetCapabilities(PlayerIndex.One).HasRightXThumbStick)
                 {
                     if (xintleft == 0)
@@ -135,12 +133,20 @@ namespace Breakout
                         if (xintleft > 0) if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xintleft;
                     }
                 }
-
+            }
+            System.Diagnostics.Debug.WriteLine("Point reached.");
+            if (padstate.DPad.Left == ButtonState.Released && padstate.DPad.Right == ButtonState.Released && kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && xintleft == 0 && xintright == 0)
+            
+            {
+                if (platform_pos.X > 0) if (padstate.Buttons.LeftShoulder == ButtonState.Pressed) platform_pos.X -= 10;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
+                    ;
             }
 
 
-            //Ball Stick thing
-            if (!isstuck)
+
+                //Ball Stick thing
+                if (!isstuck)
             {
                 ball_pos.Y = platform_pos.Y - ball.Height;
                 ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
