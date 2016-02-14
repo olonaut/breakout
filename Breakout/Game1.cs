@@ -134,24 +134,24 @@ namespace Breakout
                     }
                 }
             }
-            System.Diagnostics.Debug.WriteLine("Point reached.");
             if (padstate.DPad.Left == ButtonState.Released && padstate.DPad.Right == ButtonState.Released && kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && xintleft == 0 && xintright == 0)
             
             {
                 if (platform_pos.X > 0) if (padstate.Buttons.LeftShoulder == ButtonState.Pressed) platform_pos.X -= 10;
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
-                    ;
             }
 
 
 
-                //Ball Stick thing
-                if (!isstuck)
+            //Ball Stick thing
+            if (!isstuck)
             {
                 ball_pos.Y = platform_pos.Y - ball.Height;
                 ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
             }
 
+
+            
             base.Update(gameTime);
         }
 
