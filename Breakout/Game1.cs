@@ -38,7 +38,7 @@ namespace Breakout
             ball_pos = new Vector2(50,50);
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
-            isstuck = false;
+            isstuck = true;
 
         }
 
@@ -144,14 +144,19 @@ namespace Breakout
 
 
             //Ball Stick thing
-            if (!isstuck)
+            if (isstuck)
             {
                 ball_pos.Y = platform_pos.Y - ball.Height;
                 ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
             }
 
 
-            
+            //Check for unstuck
+            if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
+            {
+                isstuck = false;
+            }
+
             base.Update(gameTime);
         }
 
