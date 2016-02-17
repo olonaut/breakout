@@ -8,7 +8,7 @@ The Game is meant to be played in windows mode, on a fixed resolution. This may 
 Planned are:
 ##Basic Gameplay mechanics:
 * (Missig) Collision with Platform
-* (Implemented for Platform; Ceiling Missig for ball) Collision with Walls, Ceiling
+* (Implemented for Platform) Collision with Walls
 * (Missig)  Collision with destructable objects (hereby referred to as blocks)
 * (Missig) Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
 * (Missig) Blocks destroyed __AFTER__ ball bounces off them.
