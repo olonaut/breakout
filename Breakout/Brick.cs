@@ -18,7 +18,7 @@ namespace Breakout
 
         public Brick(GraphicsDeviceManager graphics, int x, int y, int width, int height, Color color)
         {
-            active = false;
+            active = true;
             position = new Vector2(x,y);
             size = new Vector2(width,height);
             texture = new Texture2D(graphics.GraphicsDevice, (int)size.X, (int)size.Y);

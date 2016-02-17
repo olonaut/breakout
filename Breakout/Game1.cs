@@ -72,9 +72,6 @@ namespace Breakout
             {
             bricks[i] = new Brick(graphics,(85*i) + (5 * i),0,85,15,brickcolor);
             }
-
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -85,6 +82,7 @@ namespace Breakout
         {
             platform.Dispose();
             ball.Dispose();
+            for (int i = 0; i < bricks.Length - 1; i++) bricks[i].texture.Dispose();
             // TODO: Unload any non ContentManager content here
         }
 
@@ -169,11 +167,29 @@ namespace Breakout
                 if (ballangle < 0) ymv =( -2 - (ballangle * 2)) * basespeed;
                 else ymv =( -2 - (ballangle * -2) ) * basespeed ;
                 ball_pos.X += xmv;
-                ball_pos.Y += ymv;
-                System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
+                if(yinv) { ball_pos.Y += (ymv * -1) ; }
+                else { ball_pos.Y += ymv; }
+                
+                //System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
 
                 //Wall Collisions
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
+
+                //TODO Platform Collisions
+
+                //TODO Brick Collisions
+                for (int i = 0; i < bricks.Length; i++) {
+                    
+                if (bricks[i].active) { 
+                        if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X > bricks[i].position.X)
+                        if ( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y > bricks[i].position.Y)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
+                            bricks[i].active = false;
+                            yinv = true;
+                        }
+                    }
+                }
             }
 
             base.Update(gameTime);
@@ -192,7 +208,7 @@ namespace Breakout
             spriteBatch.Draw(ball, ball_pos);
             for(int i = 0; i < bricks.Length; i++)
             {
-                spriteBatch.Draw(bricks[i].texture, bricks[i].position);
+                if(bricks[i].active) spriteBatch.Draw(bricks[i].texture, bricks[i].position);
  //             System.Diagnostics.Debug.WriteLine("drawing brick " + i + "at pos " + bricks[i].position.ToString());
             }
             spriteBatch.End();
