@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace Breakout
 {
@@ -20,6 +21,9 @@ namespace Breakout
         Brick[] bricks;
         bool isstuck; // for determening whether or not the ball is stuck to the platform.
         int brickammount;
+        float ballangle;  // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
+        int basespeed;
+        bool yinv;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,7 +43,8 @@ namespace Breakout
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
             isstuck = true;
-
+            basespeed = 2;
+            yinv = false;
         }
 
         /// <summary>
@@ -51,11 +56,12 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             platform = this.Content.Load<Texture2D>("platform_128");
+
             //Load Ball Data
             Color[] balldata = new Color[20 * 20];
             for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
             ball.SetData(balldata);
-
+            
             brickammount = 9;
 
 
@@ -134,27 +140,40 @@ namespace Breakout
                     }
                 }
             }
+
             if (padstate.DPad.Left == ButtonState.Released && padstate.DPad.Right == ButtonState.Released && kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && xintleft == 0 && xintright == 0)
-            
             {
                 if (platform_pos.X > 0) if (padstate.Buttons.LeftShoulder == ButtonState.Pressed) platform_pos.X -= 10;
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
             }
-
-
-
-            //Ball Stick thing
-            if (isstuck)
-            {
-                ball_pos.Y = platform_pos.Y - ball.Height;
-                ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
-            }
-
-
+            
             //Check for unstuck
             if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
             {
                 isstuck = false;
+                ballangle = 0f; //Ball will initially move straight upwards.
+            }
+
+            //Ball Stick thing
+            if (isstuck) // Ball Position is being constantly updated and set according to the platform position.
+            {
+                ball_pos.Y = platform_pos.Y - ball.Height;
+                ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
+            }
+            else
+            {
+
+                //Basic Ball movement
+                float xmv, ymv;
+                xmv = (ballangle * 2)*basespeed;
+                if (ballangle < 0) ymv =( -2 - (ballangle * 2)) * basespeed;
+                else ymv =( -2 - (ballangle * -2) ) * basespeed ;
+                ball_pos.X += xmv;
+                ball_pos.Y += ymv;
+                System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
+
+                //Wall Collisions
+                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
             }
 
             base.Update(gameTime);
