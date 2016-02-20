@@ -180,7 +180,8 @@ namespace Breakout
                 //Wall Collisions
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
 
-                //TODO Platform Collisions
+                //Ceiling collisions
+                if (ball_pos.Y <= 0) yinv = true;
                 
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
