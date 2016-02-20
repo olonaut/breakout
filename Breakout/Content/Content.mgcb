@@ -25,3 +25,9 @@
 /processorParam:TextureFormat=Color
 /build:platform_128.png
 
+#begin NewSpriteFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:NewSpriteFont.spritefont
+

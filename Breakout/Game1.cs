@@ -24,6 +24,9 @@ namespace Breakout
         float ballangle;  // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
         int basespeed;
         bool yinv;
+        private SpriteFont font;
+        string debug;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -43,8 +46,9 @@ namespace Breakout
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             base.Initialize();
             isstuck = true;
-            basespeed = 2;
+            basespeed = 6;
             yinv = false;
+            debug = "debug loading";
         }
 
         /// <summary>
@@ -55,7 +59,9 @@ namespace Breakout
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
             platform = this.Content.Load<Texture2D>("platform_128");
+            font = Content.Load<SpriteFont>("NewSpriteFont");
 
             //Load Ball Data
             Color[] balldata = new Color[20 * 20];
@@ -149,7 +155,7 @@ namespace Breakout
             if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
             {
                 isstuck = false;
-                ballangle = 0f; //Ball will initially move straight upwards.
+                ballangle = 0.25f; //Ball will initially move straight upwards.
             }
 
             //Ball Stick thing
@@ -160,7 +166,6 @@ namespace Breakout
             }
             else
             {
-
                 //Basic Ball movement
                 float xmv, ymv;
                 xmv = (ballangle * 2)*basespeed;
@@ -176,8 +181,23 @@ namespace Breakout
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
 
                 //TODO Platform Collisions
+                
+                if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
+                {
+                    if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
+                    {
+                        yinv = false;
+                        System.Diagnostics.Debug.WriteLine("inverting");
+                        int impactscore_single = 200 / platform.Width;
+                        int impactscore = ((int)(ball_pos.X + ball.Width) - (int)platform_pos.X)*impactscore_single;
+                        if (impactscore < 100) impactscore -= 100;
+                        ballangle = (float)impactscore / 100;
+                        debug = "impactscore = " + impactscore + "; angle = " + ballangle;
 
-                //TODO Brick Collisions
+                    }
+                }
+
+                //TODO Sideway collisions
                 for (int i = 0; i < bricks.Length; i++) {
                     
                 if (bricks[i].active) { 
@@ -211,6 +231,7 @@ namespace Breakout
                 if(bricks[i].active) spriteBatch.Draw(bricks[i].texture, bricks[i].position);
  //             System.Diagnostics.Debug.WriteLine("drawing brick " + i + "at pos " + bricks[i].position.ToString());
             }
+            spriteBatch.DrawString(font, debug, new Vector2(200,200),Color.Black);
             spriteBatch.End();
 
             base.Draw(gameTime);
