@@ -70,7 +70,6 @@ namespace Breakout
             
             brickammount = 9;
 
-
             Color brickcolor = Color.Red;
             System.Diagnostics.Debug.WriteLine("creating " + brickammount + " bricks.");
             bricks = new Brick[brickammount];
@@ -155,7 +154,7 @@ namespace Breakout
             if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
             {
                 isstuck = false;
-                ballangle = 0.25f; //Ball will initially move straight upwards.
+                ballangle = 0f; //Ball will initially move straight upwards.
             }
 
             //Ball Stick thing
@@ -190,7 +189,7 @@ namespace Breakout
                         yinv = false;
                         System.Diagnostics.Debug.WriteLine("inverting");
                         int impactscore_single = 200 / platform.Width;
-                        int impactscore = ((int)(ball_pos.X + ball.Width) - (int)platform_pos.X)*impactscore_single;
+                        int impactscore = (((int)(ball_pos.X + ball.Width) - (int)platform_pos.X))*impactscore_single;
                         if (impactscore < 100) impactscore -= 100;
                         ballangle = (float)impactscore / 100;
                         debug = "impactscore = " + impactscore + "; angle = " + ballangle;

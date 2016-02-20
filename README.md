@@ -12,6 +12,7 @@ Planned are:
 * (Implemented) Collision with destructable objects (hereby referred to as blocks)
 * (Needs work) Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
 * (Implemented) Blocks destroyed __AFTER__ ball bounces off them.
+* (Missing) Three lives
 
 ##"Maybe if I have time" modular features:
 * (Implemented) Controller Support (Optimised for Xbox 360)
