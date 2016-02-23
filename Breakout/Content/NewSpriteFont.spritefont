@@ -10,6 +10,7 @@ with.
 
     <!--
     Modify this string to change the font that will be imported.
+    Also, TODO: Change Font when porting to Linux.
     -->
     <FontName>Arial</FontName>
 
