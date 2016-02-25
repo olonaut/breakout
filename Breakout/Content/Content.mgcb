@@ -31,3 +31,9 @@
 /processorParam:TextureFormat=Compressed
 /build:NewSpriteFont.spritefont
 
+#begin font_gameover.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:font_gameover.spritefont
+

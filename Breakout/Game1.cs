@@ -10,22 +10,23 @@ namespace Breakout
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        KeyboardState kbstate;
-        GamePadState padstate;
-        Texture2D platform;
-        Texture2D ball;
-        Vector2 platform_pos;
-        Vector2 ball_pos;
-        Brick[] bricks;
-        bool isstuck; // for determening whether or not the ball is stuck to the platform.
-        int brickammount;
-        float ballangle;  // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
-        int basespeed;
-        bool yinv;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private KeyboardState kbstate;
+        private GamePadState padstate;
+        private Texture2D platform;
+        private Texture2D ball;
+        private Vector2 platform_pos;
+        private Vector2 ball_pos;
+        private Brick[] bricks;
+        private bool isstuck; // for determening whether or not the ball is stuck to the platform.
+        private int brickammount;
+        private float ballangle;  // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
+        private int basespeed;
+        private bool yinv;
         private SpriteFont font;
-        string debug;
+        private string debug;
+        private bool gameover;
 
         public Game1()
         {
