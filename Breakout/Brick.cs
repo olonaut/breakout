@@ -16,16 +16,16 @@ namespace Breakout
         public Texture2D texture;
         private Color[] texdata;
 
-        public Brick(GraphicsDeviceManager graphics, int x, int y, int width, int height, Color color)
+        public Brick(GraphicsDeviceManager graphics, Vector2 pos, Vector2 size, Color color)
         {
             active = true;
-            position = new Vector2(x,y);
-            size = new Vector2(width,height);
+            position = pos;
+            this.size = size;
             texture = new Texture2D(graphics.GraphicsDevice, (int)size.X, (int)size.Y);
-            texdata = new Color[width * height];
+            texdata = new Color[(int)size.X * (int)size.Y];
             for (int i = 0; i < texdata.Length; i++) texdata[i] = color;
             texture.SetData(texdata);
-            System.Diagnostics.Debug.WriteLine("x=" + x + " y=" + y + " w=" + width + " h=" + height + " c=" + color.ToString());
+            System.Diagnostics.Debug.WriteLine("x=" + pos.X + " y=" + pos.Y + " w=" + size.X + " h=" + size.Y + " c=" + color.ToString());
         }
 
     }

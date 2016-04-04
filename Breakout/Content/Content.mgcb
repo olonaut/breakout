@@ -37,3 +37,33 @@
 /processorParam:TextureFormat=Compressed
 /build:font_gameover.spritefont
 
+#begin snd/blip1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/blip1.wav
+
+#begin snd/blip2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/blip2.wav
+
+#begin snd/lowbeep.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/lowbeep.wav
+
+#begin snd/lowbeep_crush.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/lowbeep_crush.wav
+
+#begin snd/weoum.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/weoum.wav
+

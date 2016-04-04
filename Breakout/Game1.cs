@@ -26,7 +26,8 @@ namespace Breakout
         private bool yinv;
         private SpriteFont font;
         private string debug;
-        private bool gameover;
+        private bool is_gameover;
+        private SpriteFont font_gameover;
 
         public Game1()
         {
@@ -42,14 +43,20 @@ namespace Breakout
         /// </summary>
         protected override void Initialize()
         {
-            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
-            ball_pos = new Vector2(50,50);
-            ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
-            base.Initialize();
-            isstuck = true;
+            // values
+            brickammount = 9;
             basespeed = 6;
-            yinv = false;
             debug = "debug loading";
+            isstuck = true;
+            yinv = false;
+            is_gameover = false;
+
+            //Sizes and settings
+            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
+            ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
+            ball_pos = new Vector2(50,50);
+
+            base.Initialize();
         }
 
         /// <summary>
@@ -61,22 +68,25 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Load Textures
             platform = this.Content.Load<Texture2D>("platform_128");
-            font = Content.Load<SpriteFont>("NewSpriteFont");
+            System.Diagnostics.Debug.WriteLine("platform dimensions: " + platform.Width + "," + platform.Height);
 
             //Load Ball Data
             Color[] balldata = new Color[20 * 20];
             for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
             ball.SetData(balldata);
-            
-            brickammount = 9;
+
+            //Load Fonts
+            font = Content.Load<SpriteFont>("NewSpriteFont");
+            font_gameover = Content.Load<SpriteFont>("font_gameover");
 
             Color brickcolor = Color.Red;
             System.Diagnostics.Debug.WriteLine("creating " + brickammount + " bricks.");
             bricks = new Brick[brickammount];
             for (int i = 0; i < bricks.Length; i++)
             {
-            bricks[i] = new Brick(graphics,(85*i) + (5 * i),0,85,15,brickcolor);
+                bricks[i] = new Brick(graphics, new Vector2((85 * i) + (5 * i), 0), new Vector2(85, 15), brickcolor);
             }
         }
 
@@ -102,23 +112,27 @@ namespace Breakout
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
 
-            //Controlls
+            // Controlls
             kbstate = Keyboard.GetState();
+            padstate = GamePad.GetState(PlayerIndex.One);
+            // Get Thumbsticks
             float xfloatright = padstate.ThumbSticks.Right.X * 10;
             int xintright = (int)xfloatright;
             float xfloatleft = padstate.ThumbSticks.Left.X * 10;
             int xintleft = (int)xfloatleft;
-            padstate = GamePad.GetState(PlayerIndex.One);
-
+            
+            //Sprinting
+            //TODO revamp
             if (kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
             {
-                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 10;
-                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 10;
+                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A) | kbstate.IsKeyDown(Keys.Left)) platform_pos.X -= 10;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D) | kbstate.IsKeyDown(Keys.Right)) platform_pos.X += 10;
             }
             else {
-                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A)) platform_pos.X -= 5;
-                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D)) platform_pos.X += 5;
+                if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A) | kbstate.IsKeyDown(Keys.Left)) platform_pos.X -= 5;
+                if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (kbstate.IsKeyDown(Keys.D) | kbstate.IsKeyDown(Keys.Right)) platform_pos.X += 5;
             }
+
 
             if (padstate.DPad.Left == ButtonState.Pressed | padstate.DPad.Right == ButtonState.Pressed | kbstate.IsKeyDown(Keys.A) | kbstate.IsKeyDown(Keys.D))
             {
@@ -151,6 +165,16 @@ namespace Breakout
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
             }
             
+            //Reset
+            if(padstate.Buttons.Start == ButtonState.Pressed || kbstate.IsKeyDown(Keys.Enter))
+            {
+                isstuck = true;
+                yinv = false;
+                is_gameover = false;
+                basespeed = 6;  //Comment out for debug info. It's a feature.    
+            }
+
+
             //Check for unstuck
             if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
             {
@@ -166,23 +190,15 @@ namespace Breakout
             }
             else
             {
-                //Basic Ball movement
-                float xmv, ymv;
-                xmv = (ballangle * 2)*basespeed;
-                if (ballangle < 0) ymv =( -2 - (ballangle * 2)) * basespeed;
-                else ymv =( -2 - (ballangle * -2) ) * basespeed ;
-                ball_pos.X += xmv;
-                if(yinv) { ball_pos.Y += (ymv * -1) ; }
-                else { ball_pos.Y += ymv; }
-                
                 //System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
 
-                //Wall Collisions
+                //Wall collisions
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
 
-                //Ceiling collisions
+                //Ceiling collision
                 if (ball_pos.Y <= 0) yinv = true;
                 
+                //Platform collision
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
                     if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
@@ -191,14 +207,21 @@ namespace Breakout
                         System.Diagnostics.Debug.WriteLine("inverting");
                         int impactscore_single = 200 / platform.Width;
                         int impactscore = (((int)(ball_pos.X + ball.Width) - (int)platform_pos.X))*impactscore_single;
-                        if (impactscore < 100) impactscore -= 100;
+                        /*if (impactscore < 100)*/ impactscore -= 100;
                         ballangle = (float)impactscore / 100;
                         debug = "impactscore = " + impactscore + "; angle = " + ballangle;
-
                     }
                 }
 
-                //TODO Sideway collisions
+                //Basic Ball movement
+                float xmv, ymv;
+                xmv = (ballangle * 2)*basespeed;
+                if (ballangle < 0) ymv = ( -2 - (ballangle * 2)) * basespeed;
+                else ymv = ( -2 - (ballangle * -2) ) * basespeed ;
+                ball_pos.X += xmv;
+                if(yinv) ball_pos.Y += (ymv * -1) ;
+                else ball_pos.Y += ymv; 
+                
                 for (int i = 0; i < bricks.Length; i++) {
                     
                 if (bricks[i].active) { 
@@ -211,8 +234,14 @@ namespace Breakout
                         }
                     }
                 }
-            }
 
+                if (checkGameOver(ball_pos.Y))
+                {
+                    basespeed = 0;
+                    is_gameover = true;
+                } 
+
+            }
             base.Update(gameTime);
         }
 
@@ -223,19 +252,45 @@ namespace Breakout
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            
             spriteBatch.Begin();
             spriteBatch.Draw(platform, platform_pos);
             spriteBatch.Draw(ball, ball_pos);
-            for(int i = 0; i < bricks.Length; i++)
+
+            for (int i = 0; i < bricks.Length; i++)
             {
                 if(bricks[i].active) spriteBatch.Draw(bricks[i].texture, bricks[i].position);
- //             System.Diagnostics.Debug.WriteLine("drawing brick " + i + "at pos " + bricks[i].position.ToString());
             }
-            spriteBatch.DrawString(font, debug, new Vector2(200,200),Color.Black);
-            spriteBatch.End();
+            if (is_gameover)
+            {
+                if (padstate.IsConnected)
+                {
+                    spriteBatch.DrawString(font_gameover, "Press START", new Vector2((graphics.GraphicsDevice.Viewport.Width/2) - (font_gameover.MeasureString("Press START").X/2), (graphics.GraphicsDevice.Viewport.Height / 2) - (font_gameover.MeasureString("Press START").Y / 2)), Color.Red);
+                }
+                else
+                {
+                    spriteBatch.DrawString(font_gameover, "Press ENTER", new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) - (font_gameover.MeasureString("Press ENTER").X / 2), (graphics.GraphicsDevice.Viewport.Height / 2) - (font_gameover.MeasureString("Press ENTER").Y / 2)), Color.Red);
+                }
+            }
+            else
+            {
 
+            } spriteBatch.DrawString(font, debug, new Vector2(200, 200), Color.Black);
+
+            spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        //Simple check funciton for better code organizing
+        private bool checkGameOver(float pos) {
+            if (pos > graphics.GraphicsDevice.Viewport.Height)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

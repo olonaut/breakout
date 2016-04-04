@@ -2,7 +2,7 @@
 
 namespace Breakout
 {
-#if WINDOWS || LINUX
+    // #if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -18,5 +18,5 @@ namespace Breakout
                 game.Run();
         }
     }
-#endif
+// #endif
 }
