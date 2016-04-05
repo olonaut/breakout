@@ -98,7 +98,7 @@ namespace Breakout
         {
             platform.Dispose();
             ball.Dispose();
-            for (int i = 0; i < bricks.Length - 1; i++) bricks[i].texture.Dispose();
+            for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
             // TODO: Unload any non ContentManager content here
         }
 

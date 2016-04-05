@@ -28,5 +28,11 @@ namespace Breakout
             System.Diagnostics.Debug.WriteLine("x=" + pos.X + " y=" + pos.Y + " w=" + size.X + " h=" + size.Y + " c=" + color.ToString());
         }
 
+        public void Dispose()
+        {
+            texture.Dispose();
+            active = false;
+        }
+
     }
 }
