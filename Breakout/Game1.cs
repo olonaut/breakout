@@ -171,7 +171,7 @@ namespace Breakout
                 isstuck = true;
                 yinv = false;
                 is_gameover = false;
-                basespeed = 0;   
+                basespeed = 6;   
             }
 
 
