@@ -171,7 +171,7 @@ namespace Breakout
                 isstuck = true;
                 yinv = false;
                 is_gameover = false;
-                basespeed = 6;  //Comment out for debug info. It's a feature.    
+                basespeed = 0;   
             }
 
 
@@ -204,12 +204,11 @@ namespace Breakout
                     if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
                     {
                         yinv = false;
-                        System.Diagnostics.Debug.WriteLine("inverting");
-                        int impactscore_single = 200 / platform.Width;
-                        int impactscore = (((int)(ball_pos.X + ball.Width) - (int)platform_pos.X))*impactscore_single;
-                        /*if (impactscore < 100)*/ impactscore -= 100;
+                        int ballpos = (((int)(ball_pos.X + (ball.Width / 2)) - (int)platform_pos.X));
+                        double impactscore = ballpos * (200 / (float)platform.Width);
+                        impactscore -= 100;
                         ballangle = (float)impactscore / 100;
-                        debug = "impactscore = " + impactscore + "; angle = " + ballangle;
+                        debug = "impactscore = " + impactscore + "; angle = " + ballangle + "; ballpos = " + ballpos;
                     }
                 }
 
@@ -274,8 +273,8 @@ namespace Breakout
             }
             else
             {
-
-            } spriteBatch.DrawString(font, debug, new Vector2(200, 200), Color.Black);
+             spriteBatch.DrawString(font, debug, new Vector2(200, 200), Color.Black);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
