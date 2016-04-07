@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
 
 namespace Breakout
 {
@@ -28,6 +29,7 @@ namespace Breakout
         private string debug;
         private bool is_gameover;
         private SpriteFont font_gameover;
+        static DateTime startRumble;
 
         public Game1()
         {
@@ -120,9 +122,7 @@ namespace Breakout
             int xintright = (int)xfloatright;
             float xfloatleft = padstate.ThumbSticks.Left.X * 10;
             int xintleft = (int)xfloatleft;
-            
             //Sprinting
-            //TODO revamp
             if (kbstate.IsKeyDown(Keys.LeftShift) | kbstate.IsKeyDown(Keys.RightShift))
             {
                 if (platform_pos.X > 0) if (kbstate.IsKeyDown(Keys.A) | kbstate.IsKeyDown(Keys.Left)) platform_pos.X -= 10;
@@ -193,8 +193,10 @@ namespace Breakout
                 //System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
 
                 //Wall collisions
-                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width) ballangle *= -1;
-
+                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
+                {
+                    ballangle *= -1;
+                }
                 //Ceiling collision
                 if (ball_pos.Y <= 0) yinv = true;
                 
@@ -209,6 +211,9 @@ namespace Breakout
                         impactscore -= 100;
                         ballangle = (float)impactscore / 100;
                         debug = "impactscore = " + impactscore + "; angle = " + ballangle + "; ballpos = " + ballpos;
+
+                        //Controller Rumble
+                        if(!is_gameover) startrumble();
                     }
                 }
 
@@ -241,6 +246,10 @@ namespace Breakout
                 } 
 
             }
+
+            //Controller Rumble Check
+            checkrumble();
+
             base.Update(gameTime);
         }
 
@@ -291,5 +300,29 @@ namespace Breakout
                 return false;
             }
         }
+
+        private void checkrumble()
+        {
+            if (padstate.IsConnected)
+            {
+                TimeSpan timePassed = DateTime.Now - startRumble;
+                if(timePassed.TotalSeconds >= 0.1)
+                {
+                    GamePad.SetVibration(PlayerIndex.One, 0f, 0f);
+
+                }
+            }
+        }
+
+
+        private void startrumble()
+        {
+            if ( padstate.IsConnected )
+            {
+                GamePad.SetVibration(PlayerIndex.One, 1f, 1f);
+                startRumble = DateTime.Now;
+            }
+        }
+
     }
 }
