@@ -7,15 +7,15 @@ The Game is meant to be played in windows mode, on a fixed resolution. This may 
 
 Planned are:
 ##Basic Gameplay mechanics:
-* (Implemented) Collision with Platform
-* (Implemented) Collision with Walls
-* (Implemented) Collision with destructable objects (hereby referred to as blocks)
-* (Implemented, Testing) Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
-* (Implemented) Blocks destroyed __AFTER__ ball bounces off them.
-* (Missing) Three lives
+* __(Implemented)__ Collision with Platform
+* __(Implemented)__ Collision with Walls
+* __(Implemented)__ Collision with destructable objects (hereby referred to as blocks)
+* __(Implemented, Testing)__ Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
+* __(Implemented)__ Blocks destroyed after ball bounces off them.
+* __(Missing)__ Three lives
 
 ##"Maybe if I have time" modular features:
-* (Implemented) Controller Support (Please help test this)
-* (Missing) Controller Rumbles a bit when Ball hits platform
-* (Missing) Sound
-* (Missing) Powerups maybe?
+* __(Implemented)__ Controller Support (Please help test this)
+* __(Missing)__ Controller Rumbles a bit when Ball hits platform
+* __(Missing)__ Sound
+* __(Missing)__ Powerups maybe?
