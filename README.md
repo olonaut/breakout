@@ -10,12 +10,12 @@ Planned are:
 * (Implemented) Collision with Platform
 * (Implemented) Collision with Walls
 * (Implemented) Collision with destructable objects (hereby referred to as blocks)
-* (Needs work) Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
+* (Implemented, Testing) Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
 * (Implemented) Blocks destroyed __AFTER__ ball bounces off them.
 * (Missing) Three lives
 
 ##"Maybe if I have time" modular features:
 * (Implemented) Controller Support (Optimised for Xbox 360)
-* (Missnig) Controller Rumbles a bit when Ball hits platform
-* (Missnig) Sound
-* (Missnig) Powerups maybe?
+* (Missing) Controller Rumbles a bit when Ball hits platform
+* (Missing) Sound
+* (Missing) Powerups maybe?
