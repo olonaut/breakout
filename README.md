@@ -15,7 +15,7 @@ Planned are:
 * (Missing) Three lives
 
 ##"Maybe if I have time" modular features:
-* (Implemented) Controller Support (Optimised for Xbox 360)
+* (Implemented) Controller Support (Please help test this)
 * (Missing) Controller Rumbles a bit when Ball hits platform
 * (Missing) Sound
 * (Missing) Powerups maybe?
