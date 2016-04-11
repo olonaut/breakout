@@ -46,7 +46,7 @@ namespace Breakout
         protected override void Initialize()
         {
             // values
-            brickammount = 9;
+            brickammount = 9; // per row
             basespeed = 6;
             debug = "debug loading";
             isstuck = true;
@@ -227,7 +227,6 @@ namespace Breakout
                 else ball_pos.Y += ymv; 
                 
                 for (int i = 0; i < bricks.Length; i++) {
-                    
                 if (bricks[i].active) { 
                         if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X > bricks[i].position.X)
                         if ( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y > bricks[i].position.Y)
@@ -306,7 +305,7 @@ namespace Breakout
             if (padstate.IsConnected)
             {
                 TimeSpan timePassed = DateTime.Now - startRumble;
-                if(timePassed.TotalSeconds >= 0.1)
+                if(timePassed.TotalSeconds >= 0.07)
                 {
                     GamePad.SetVibration(PlayerIndex.One, 0f, 0f);
 
@@ -319,7 +318,7 @@ namespace Breakout
         {
             if ( padstate.IsConnected )
             {
-                GamePad.SetVibration(PlayerIndex.One, 1f, 1f);
+                GamePad.SetVibration(PlayerIndex.One, 1f, 0f);
                 startRumble = DateTime.Now;
             }
         }
