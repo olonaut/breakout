@@ -103,11 +103,6 @@ namespace Breakout
             for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
             // TODO: Unload any non ContentManager content here
         }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
         
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
@@ -195,12 +190,13 @@ namespace Breakout
                 //Wall collisions
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
                 {
-                    ballangle *= -1;
+                    invertX();
                 }
                 //Ceiling collision
                 if (ball_pos.Y <= 0) yinv = true;
                 
                 //Platform collision
+                //TODO divide
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
                     if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
@@ -323,5 +319,9 @@ namespace Breakout
             }
         }
 
+        private void invertX()
+        {
+            ballangle *= -1;
+        }
     }
 }
