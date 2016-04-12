@@ -213,11 +213,11 @@ namespace Breakout
                 if(yinv) ball_pos.Y += (ymv * -1) ;
                 else ball_pos.Y += ymv; 
                 
-                //Brick(s) collision
+                //Brick collision
                 for (int i = 0; i < bricks.Length; i++) {
                 if (bricks[i].active) { 
-                        if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X > bricks[i].position.X)
-                        if( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y > bricks[i].position.Y)
+                        if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X + ball.Width > bricks[i].position.X)
+                        if( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y + ball.Height > bricks[i].position.Y)
                         {
                             System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
                             bricks[i].active = false;
