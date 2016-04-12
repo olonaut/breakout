@@ -84,6 +84,8 @@ namespace Breakout
             font_gameover = Content.Load<SpriteFont>("font_gameover");
 
             Color brickcolor = Color.Red;
+
+            //Create Bricks
             System.Diagnostics.Debug.WriteLine("creating " + brickammount + " bricks.");
             bricks = new Brick[brickammount];
             for (int i = 0; i < bricks.Length; i++)
@@ -215,14 +217,20 @@ namespace Breakout
                 
                 //Brick collision
                 for (int i = 0; i < bricks.Length; i++) {
-                if (bricks[i].active) { 
-                        if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X + ball.Width > bricks[i].position.X)
-                        if( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y + ball.Height > bricks[i].position.Y)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
-                            bricks[i].active = false;
-                            yinv = true;
-                        }
+                    if (bricks[i].active) {
+                        if (ball_pos.X < bricks[i].position.X + bricks[i].size.X && ball_pos.X + ball.Width > bricks[i].position.X)
+                            if (ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y + ball.Height > bricks[i].position.Y)
+                                if (ball_pos.X + ball.Width < bricks[i].position.X+10 || ball_pos.X > bricks[i].position.X+ bricks[i].size.X - 10)
+                                {
+                                    System.Diagnostics.Debug.WriteLine("Sideways collision detected with brick " + i);
+                                    bricks[i].active = false;
+                                    invertX();
+                                }
+                                else{
+                                    System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
+                                    bricks[i].active = false;
+                                    yinv = true;
+                                }
                     }
                 }
 
