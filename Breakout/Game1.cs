@@ -92,19 +92,13 @@ namespace Breakout
             }
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
         protected override void UnloadContent()
         {
             platform.Dispose();
             ball.Dispose();
             for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
-            // TODO: Unload any non ContentManager content here
         }
         
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
@@ -185,8 +179,6 @@ namespace Breakout
             }
             else
             {
-                //System.Diagnostics.Debug.WriteLine("ymv " + ymv + "xmv" + xmv);
-
                 //Wall collisions
                 if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
                 {
@@ -196,7 +188,6 @@ namespace Breakout
                 if (ball_pos.Y <= 0) yinv = true;
                 
                 //Platform collision
-                //TODO divide
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
                     if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
@@ -222,10 +213,11 @@ namespace Breakout
                 if(yinv) ball_pos.Y += (ymv * -1) ;
                 else ball_pos.Y += ymv; 
                 
+                //Brick(s) collision
                 for (int i = 0; i < bricks.Length; i++) {
                 if (bricks[i].active) { 
                         if( ball_pos.X < bricks[i].position.X + bricks [i].size.X && ball_pos.X > bricks[i].position.X)
-                        if ( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y > bricks[i].position.Y)
+                        if( ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y > bricks[i].position.Y)
                         {
                             System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
                             bricks[i].active = false;
@@ -233,6 +225,7 @@ namespace Breakout
                         }
                     }
                 }
+
 
                 if (checkGameOver(ball_pos.Y))
                 {
@@ -248,10 +241,6 @@ namespace Breakout
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
