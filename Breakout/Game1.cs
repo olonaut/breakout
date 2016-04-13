@@ -19,16 +19,26 @@ namespace Breakout
         private Texture2D ball;
         private Vector2 platform_pos;
         private Vector2 ball_pos;
-        private Brick[] bricks;
+
         private bool isstuck; // for determening whether or not the ball is stuck to the platform.
+
+        private Brick[] bricks;
         private int brickammount;
-        private float ballangle;  // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
+        private int rows;
+        private int totalbricks;
+        private Color[] brickColor;
+
+        private short brickSidezone;
+
+        private float ballangle; // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
         private int basespeed;
         private bool yinv;
         private SpriteFont font;
         private string debug;
+
         private bool is_gameover;
         private SpriteFont font_gameover;
+
         static DateTime startRumble;
 
         public Game1()
@@ -47,16 +57,21 @@ namespace Breakout
         {
             // values
             brickammount = 9; // per row
+            rows = 5;
             basespeed = 6;
             debug = "debug loading";
             isstuck = true;
             yinv = false;
             is_gameover = false;
+            totalbricks = rows * brickammount;
 
             //Sizes and settings
-            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
+            platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
-            ball_pos = new Vector2(50,50);
+            ball_pos = new Vector2(50, 50);
+            brickColor = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
+
+            brickSidezone = 7;
 
             base.Initialize();
         }
@@ -83,15 +98,15 @@ namespace Breakout
             font = Content.Load<SpriteFont>("NewSpriteFont");
             font_gameover = Content.Load<SpriteFont>("font_gameover");
 
-            Color brickcolor = Color.Red;
-
             //Create Bricks
-            System.Diagnostics.Debug.WriteLine("creating " + brickammount + " bricks.");
-            bricks = new Brick[brickammount];
-            for (int i = 0; i < bricks.Length; i++)
-            {
-                bricks[i] = new Brick(graphics, new Vector2((85 * i) + (5 * i), 0), new Vector2(85, 15), brickcolor);
-            }
+            System.Diagnostics.Debug.WriteLine("creating " + totalbricks + " bricks.");
+            bricks = new Brick[totalbricks];
+
+            for (int _rows = 0; _rows < rows; _rows++)
+                for (int i = 0; i < brickammount; i++)
+                {
+                    bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColor[_rows]);
+                }
         }
 
         protected override void UnloadContent()
@@ -100,7 +115,7 @@ namespace Breakout
             ball.Dispose();
             for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
         }
-        
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
@@ -135,7 +150,7 @@ namespace Breakout
                 if (GamePad.GetCapabilities(PlayerIndex.One).HasRightXThumbStick)
                 {
                     if (xintleft == 0)
-                    { 
+                    {
                         if (xintright < 0) if (platform_pos.X > 0) platform_pos.X += xintright;
                         if (xintright > 0) if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) platform_pos.X += xintright;
                     }
@@ -155,19 +170,19 @@ namespace Breakout
                 if (platform_pos.X > 0) if (padstate.Buttons.LeftShoulder == ButtonState.Pressed) platform_pos.X -= 10;
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
             }
-            
+
             //Reset
-            if(padstate.Buttons.Start == ButtonState.Pressed || kbstate.IsKeyDown(Keys.Enter))
+            if (padstate.Buttons.Start == ButtonState.Pressed || kbstate.IsKeyDown(Keys.Enter))
             {
                 isstuck = true;
                 yinv = false;
                 is_gameover = false;
-                basespeed = 6;   
+                basespeed = 6;
             }
 
 
             //Check for unstuck
-            if(kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
+            if (kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
             {
                 isstuck = false;
                 ballangle = 0f; //Ball will initially move straight upwards.
@@ -177,7 +192,7 @@ namespace Breakout
             if (isstuck) // Ball Position is being constantly updated and set according to the platform position.
             {
                 ball_pos.Y = platform_pos.Y - ball.Height;
-                ball_pos.X = platform_pos.X + platform.Width/2 - ball.Width/2;
+                ball_pos.X = platform_pos.X + platform.Width / 2 - ball.Width / 2;
             }
             else
             {
@@ -188,7 +203,7 @@ namespace Breakout
                 }
                 //Ceiling collision
                 if (ball_pos.Y <= 0) yinv = true;
-                
+
                 //Platform collision
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
@@ -202,31 +217,33 @@ namespace Breakout
                         debug = "impactscore = " + impactscore + "; angle = " + ballangle + "; ballpos = " + ballpos;
 
                         //Controller Rumble
-                        if(!is_gameover) startrumble();
+                        if (!is_gameover) startrumble();
                     }
                 }
 
                 //Basic Ball movement
                 float xmv, ymv;
-                xmv = (ballangle * 2)*basespeed;
-                if (ballangle < 0) ymv = ( -2 - (ballangle * 2)) * basespeed;
-                else ymv = ( -2 - (ballangle * -2) ) * basespeed ;
+                xmv = (ballangle * 2) * basespeed;
+                if (ballangle < 0) ymv = (-2 - (ballangle * 2)) * basespeed;
+                else ymv = (-2 - (ballangle * -2)) * basespeed;
                 ball_pos.X += xmv;
-                if(yinv) ball_pos.Y += (ymv * -1) ;
-                else ball_pos.Y += ymv; 
-                
+                if (yinv) ball_pos.Y += (ymv * -1);
+                else ball_pos.Y += ymv;
+
                 //Brick collision
-                for (int i = 0; i < bricks.Length; i++) {
-                    if (bricks[i].active) {
+                for (int i = 0; i < bricks.Length; i++)
+                {
+                    if (bricks[i].active)
+                    {
                         if (ball_pos.X < bricks[i].position.X + bricks[i].size.X && ball_pos.X + ball.Width > bricks[i].position.X)
                             if (ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y + ball.Height > bricks[i].position.Y)
-                                if (ball_pos.X + ball.Width < bricks[i].position.X+10 || ball_pos.X > bricks[i].position.X+ bricks[i].size.X - 10)
+                                if (ball_pos.X + ball.Width < bricks[i].position.X + brickSidezone || ball_pos.X > bricks[i].position.X + bricks[i].size.X - brickSidezone)
                                 {
                                     System.Diagnostics.Debug.WriteLine("Sideways collision detected with brick " + i);
                                     bricks[i].active = false;
                                     invertX();
                                 }
-                                else{
+                                else {
                                     System.Diagnostics.Debug.WriteLine("Collision detected with brick " + i);
                                     bricks[i].active = false;
                                     yinv = true;
@@ -239,7 +256,7 @@ namespace Breakout
                 {
                     basespeed = 0;
                     is_gameover = true;
-                } 
+                }
 
             }
 
@@ -252,20 +269,20 @@ namespace Breakout
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
+
             spriteBatch.Begin();
             spriteBatch.Draw(platform, platform_pos);
             spriteBatch.Draw(ball, ball_pos);
 
             for (int i = 0; i < bricks.Length; i++)
             {
-                if(bricks[i].active) spriteBatch.Draw(bricks[i].texture, bricks[i].position);
+                if (bricks[i].active) spriteBatch.Draw(bricks[i].texture, bricks[i].position);
             }
             if (is_gameover)
             {
                 if (padstate.IsConnected)
                 {
-                    spriteBatch.DrawString(font_gameover, "Press START", new Vector2((graphics.GraphicsDevice.Viewport.Width/2) - (font_gameover.MeasureString("Press START").X/2), (graphics.GraphicsDevice.Viewport.Height / 2) - (font_gameover.MeasureString("Press START").Y / 2)), Color.Red);
+                    spriteBatch.DrawString(font_gameover, "Press START", new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) - (font_gameover.MeasureString("Press START").X / 2), (graphics.GraphicsDevice.Viewport.Height / 2) - (font_gameover.MeasureString("Press START").Y / 2)), Color.Red);
                 }
                 else
                 {
@@ -274,7 +291,7 @@ namespace Breakout
             }
             else
             {
-             spriteBatch.DrawString(font, debug, new Vector2(200, 200), Color.Black);
+                spriteBatch.DrawString(font, debug, new Vector2(200, 200), Color.Black);
             }
 
             spriteBatch.End();
@@ -282,7 +299,8 @@ namespace Breakout
         }
 
         //Simple check funciton for better code organizing
-        private bool checkGameOver(float pos) {
+        private bool checkGameOver(float pos)
+        {
             if (pos > graphics.GraphicsDevice.Viewport.Height)
             {
                 return true;
@@ -298,7 +316,7 @@ namespace Breakout
             if (padstate.IsConnected)
             {
                 TimeSpan timePassed = DateTime.Now - startRumble;
-                if(timePassed.TotalSeconds >= 0.07)
+                if (timePassed.TotalSeconds >= 0.07)
                 {
                     GamePad.SetVibration(PlayerIndex.One, 0f, 0f);
 
@@ -309,7 +327,7 @@ namespace Breakout
 
         private void startrumble()
         {
-            if ( padstate.IsConnected )
+            if (padstate.IsConnected)
             {
                 GamePad.SetVibration(PlayerIndex.One, 1f, 0f);
                 startRumble = DateTime.Now;
