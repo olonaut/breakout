@@ -9,13 +9,13 @@ Planned are:
 ##Basic Gameplay mechanics:
 * __(Implemented)__ Collision with Platform
 * __(Implemented)__ Collision with Walls
-* __(Implemented)__ Collision with destructable objects (hereby referred to as blocks)
+* __(Implemented, Buggy)__ Collision with destructable objects (hereby referred to as blocks)
 * __(Implemented, Testing)__ Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
 * __(Implemented)__ Blocks destroyed after ball bounces off them.
-* __(Missing)__ Three lives
 
 ##"Maybe if I have time" modular features:
 * __(Implemented)__ Controller Support (Please help test this)
-* __(Missing)__ Controller Rumbles a bit when Ball hits platform
+* __(Implemented)__ Controller Rumbles a bit when Ball hits platform
 * __(Missing)__ Sound
 * __(Missing)__ Powerups maybe?
+* __(Missing)__ Three lives
