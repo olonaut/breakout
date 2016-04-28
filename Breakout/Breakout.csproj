@@ -80,6 +80,7 @@
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Ball.cs" />
     <Compile Include="Brick.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
