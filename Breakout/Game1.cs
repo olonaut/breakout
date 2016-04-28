@@ -195,13 +195,24 @@ namespace Breakout
             else
             {
                 //Wall collisions
-                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
+                if(ball_pos.X <= 0 && ballangle < 0)
                 {
-                    invertX();
+                    doXinv = true;
+                }
+                else if((ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width && ballangle > 0)
+                {
+                    doXinv = true;
                 }
 
+                /*
+                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
+                {
+                    doXinv = true;
+                } 
+                */
+
                 //Ceiling collision
-                if (ball_pos.Y <= 0) yinv = true;
+                if (ball_pos.Y <= 0) doYinv = true;
 
                 //Platform collision
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
@@ -241,8 +252,8 @@ namespace Breakout
                                 Vector2 relDist;
                                 bricks[i].active = false;
                                 if (ballangle == 0) /* Ball move Straight up (or down I think) */
-                                {
-                                    invertY();
+                {
+                    doYinv = true;
                                 }
                                 else if (ballangle > 0) /* Ball moves left to right */
                                 {
@@ -258,11 +269,11 @@ namespace Breakout
 
                                     if (relDist.X < relDist.Y)
                                     {
-                                        invertX();
+                                        doXinv = true;
                                     }
                                     else
                                     {
-                                        invertY();
+                                        doYinv = true;
                                     }
 
 
@@ -281,11 +292,11 @@ namespace Breakout
 
                                     if (relDist.X < relDist.Y)
                                     {
-                                        invertX();
+                                        doXinv = true;
                                     }
                                     else
                                     {
-                                        invertY();
+                                        doYinv = true;
                                     }
 
                                 }
