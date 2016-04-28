@@ -6,9 +6,6 @@ using System;
 
 namespace Breakout
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
@@ -20,7 +17,7 @@ namespace Breakout
         private Vector2 platform_pos;
         private Vector2 ball_pos;
 
-        private bool doYinv, doXinv;
+      /*private bool doYinv, doXinv; */
         private bool isstuck; // for determening whether or not the ball is stuck to the platform.
 
         private Brick[] bricks;
@@ -51,12 +48,6 @@ namespace Breakout
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
             // values
@@ -121,6 +112,7 @@ namespace Breakout
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
             /* Ball Event Handler */
+            bool doXinv, doYinv;
             doXinv = false;
             doYinv = false;
 
@@ -299,20 +291,6 @@ namespace Breakout
                                 }
 
                             }
-
-
-
-                                /* if (ball_pos.X + ball.Width < bricks[i].position.X + brickSidezone || ball_pos.X > bricks[i].position.X + bricks[i].size.X - brickSidezone)
-                                {
-                                debug = "Sideways collision detected with brick " + i;
-                                    bricks[i].active = false;
-                                    invertX();
-                                }
-                                else {
-                                    debug = "Collision detected with brick " + i;
-                                    bricks[i].active = false;
-                                    invertY();
-                                } */
                     }
                 }
 
@@ -325,8 +303,11 @@ namespace Breakout
 
             }
 
-            //Controller Rumble Check
+            /* Controller Rumble Check */
             checkrumble();
+
+            /* Execute Ball Movement Changes */
+            execBallDirChange(doXinv,doYinv);
 
             base.Update(gameTime);
         }
@@ -363,7 +344,7 @@ namespace Breakout
             base.Draw(gameTime);
         }
 
-        //Simple check funciton for better code organizing
+        /* Simple check funciton for better code organizing */
         private bool checkGameOver(float pos)
         {
             if (pos > graphics.GraphicsDevice.Viewport.Height)
@@ -434,6 +415,19 @@ namespace Breakout
             else dist.Y = (point.Y - pointBrick.Y) * relAngle.Y;
 
             return dist;
+        }
+
+        private void execBallDirChange(bool doXinv, bool doYinv)
+        {
+            if (doXinv)
+            {
+                invertX();
+            }
+
+            if (doYinv)
+            {
+                invertY();
+            }
         }
 
     }
