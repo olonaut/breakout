@@ -82,6 +82,7 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Ball.cs" />
     <Compile Include="Brick.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
