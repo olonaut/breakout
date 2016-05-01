@@ -204,15 +204,8 @@ namespace Breakout
                     doXinv = true;
                 }
 
-                /*
-                if (ball_pos.X <= 0 || (ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width)
-                {
-                    doXinv = true;
-                } 
-                */
-
                 //Ceiling collision
-                if (ball_pos.Y <= 0) doYinv = true;
+                if (ball_pos.Y <= 0 && !yinv) doYinv = true;
 
                 //Platform collision
                 if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
