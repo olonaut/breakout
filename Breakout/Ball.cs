@@ -24,8 +24,22 @@ namespace Breakout
             isstuck = true;
             yinv = false;
             pos = new Vector2(50, 50);
-
         }
 
+        public void loadTexture(GraphicsDevice gDevice)
+        {
+            texture = new Texture2D(gDevice,20,20);
+            Color[] balldata = new Color[20 * 20];
+            for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
+            texture.SetData(balldata);
+        }
+
+        public void loadTexture(GraphicsDevice gDevice, Color color)
+        {
+            texture = new Texture2D(gDevice, 20, 20);
+            Color[] balldata = new Color[20 * 20];
+            for (int i = 0; i < balldata.Length; i++) balldata[i] = color;
+            texture.SetData(balldata);
+        }
     }
 }
