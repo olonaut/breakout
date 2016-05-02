@@ -10,7 +10,7 @@ Planned are:
 * __(Implemented)__ Collision with Platform
 * __(Implemented)__ Collision with Walls
 * __(Implemented, Testing)__ Collision with destructable objects (hereby referred to as blocks)
-* __(Implemented, Testing)__ Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
+* __(Implemented)__ Ball bounces off the plattform, angle determined by point on the platform the ball impacts on.
 * __(Implemented)__ Blocks destroyed after ball bounces off them.
 * __(Implemented)__ Game over screen
 
