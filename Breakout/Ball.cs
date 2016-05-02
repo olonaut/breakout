@@ -41,5 +41,22 @@ namespace Breakout
             for (int i = 0; i < balldata.Length; i++) balldata[i] = color;
             texture.SetData(balldata);
         }
+
+        public void invertX()
+        {
+            ballangle *= -1;
+        }
+
+        public void invertY()
+        {
+            yinv = !yinv;
+        }
+
+        public void resetHandler()
+        {
+            doXinv = false;
+            doYinv = false;
+
+        }
     }
 }
