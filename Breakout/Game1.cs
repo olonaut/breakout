@@ -1,7 +1,7 @@
 ﻿/*
 
     Simple Breakout Game made in C# using the MonoGame SDK
-    Copyright (C) 2016  Marcel Kurz
+    Copyright (C) 2016 Marcel Kurz
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,14 +37,13 @@ namespace Breakout
         private Vector2 platform_pos;
         private Vector2 ball_pos;
 
-      /*private bool doYinv, doXinv; */
         private bool isstuck; // for determening whether or not the ball is stuck to the platform.
 
         private Brick[] bricks;
         private int brickammount;
         private int rows;
         private int totalbricks;
-        private Color[] brickColor;
+        private Color[] brickColors;
 
         private short brickSidezone;
 
@@ -84,7 +83,7 @@ namespace Breakout
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
             ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
             ball_pos = new Vector2(50, 50);
-            brickColor = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
+            brickColors = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
 
             brickSidezone = 7;
 
@@ -116,7 +115,7 @@ namespace Breakout
             for (int _rows = 0; _rows < rows; _rows++)
                 for (int i = 0; i < brickammount; i++)
                 {
-                    bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColor[_rows]);
+                    bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColors[_rows]);
                 }
         }
 
