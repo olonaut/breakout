@@ -37,3 +37,21 @@
 /processorParam:TextureFormat=Compressed
 /build:font_gameover.spritefont
 
+#begin snd/brickHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/brickHit.wav
+
+#begin snd/platformHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/platformHit.wav
+
+#begin snd/wallHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:snd/wallHit.wav
+
