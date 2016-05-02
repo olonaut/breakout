@@ -1,7 +1,7 @@
 ﻿/*
 
     Simple Breakout Game made in C# using the MonoGame SDK
-    Copyright (C) 2016  Marcel Kurz
+    Copyright (C) 2016 Marcel Kurz
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,25 +32,18 @@ namespace Breakout
         private SpriteBatch spriteBatch;
         private KeyboardState kbstate;
         private GamePadState padstate;
-        private Texture2D platform;
-        private Texture2D ball;
-        private Vector2 platform_pos;
-        private Vector2 ball_pos;
+        private Ball ball;
 
-      /*private bool doYinv, doXinv; */
-        private bool isstuck; // for determening whether or not the ball is stuck to the platform.
+        private Texture2D platform;
+        private Vector2 platform_pos;
 
         private Brick[] bricks;
         private int brickammount;
         private int rows;
         private int totalbricks;
-        private Color[] brickColor;
+        private Color[] brickColors;
 
-        private short brickSidezone;
-
-        private float ballangle; // Angle in which the ball is moving. 0 = 90 degree upwards; -1 = 0 Degrees ( completly right ); +1 = 180 degrees.
         private int basespeed;
-        private bool yinv;
 
         /* Debugging Information */
         private SpriteFont font;
@@ -75,18 +68,13 @@ namespace Breakout
             rows = 5;
             basespeed = 6;
             debug = "debug loading";
-            isstuck = true;
-            yinv = false;
             is_gameover = false;
             totalbricks = rows * brickammount;
 
             //Sizes and settings
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
-            ball = new Texture2D(graphics.GraphicsDevice, 20, 20);
-            ball_pos = new Vector2(50, 50);
-            brickColor = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
-
-            brickSidezone = 7;
+            ball = new Ball();
+            brickColors = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
 
             base.Initialize();
         }
@@ -101,9 +89,7 @@ namespace Breakout
             System.Diagnostics.Debug.WriteLine("platform dimensions: " + platform.Width + "," + platform.Height);
 
             //Load Ball Data
-            Color[] balldata = new Color[20 * 20];
-            for (int i = 0; i < balldata.Length; i++) balldata[i] = Color.Black;
-            ball.SetData(balldata);
+            ball.loadTexture(graphics.GraphicsDevice, Color.Black);
 
             //Load Fonts
             font = Content.Load<SpriteFont>("NewSpriteFont");
@@ -116,14 +102,14 @@ namespace Breakout
             for (int _rows = 0; _rows < rows; _rows++)
                 for (int i = 0; i < brickammount; i++)
                 {
-                    bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColor[_rows]);
+                    bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColors[_rows]);
                 }
         }
 
         protected override void UnloadContent()
         {
             platform.Dispose();
-            ball.Dispose();
+            ball.texture.Dispose();
             for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
         }
 
@@ -131,11 +117,8 @@ namespace Breakout
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
-            /* Ball Event Handler */
-            bool doXinv, doYinv;
-            doXinv = false;
-            doYinv = false;
-
+            ball.resetHandler();
+            
             /* Controlls */
             kbstate = Keyboard.GetState();
             padstate = GamePad.GetState(PlayerIndex.One);
@@ -192,52 +175,52 @@ namespace Breakout
             //Reset
             if (padstate.Buttons.Start == ButtonState.Pressed || kbstate.IsKeyDown(Keys.Enter))
             {
-                isstuck = true;
-                yinv = false;
+                ball.isstuck = true;
+                ball.yinv = false;
                 is_gameover = false;
                 basespeed = 6;
             }
 
             //Check for unstuck
-            if (isstuck)
-            if (kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
-            {
-                isstuck = false;
-                ballangle = 0f; //Ball will initially move straight upwards.
-            }
+            if (ball.isstuck)
+                if (kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
+                {
+                    ball.isstuck = false;
+                    ball.ballangle = 0f; //Ball will initially move straight upwards.
+                }
 
             //Ball Stick thing
-            if (isstuck) // Ball Position is being constantly updated and set according to the platform position.
+            if (ball.isstuck) // Ball Position is being constantly updated and set according to the platform position.
             {
-                ball_pos.Y = platform_pos.Y - ball.Height;
-                ball_pos.X = platform_pos.X + platform.Width / 2 - ball.Width / 2;
+                ball.pos.Y = platform_pos.Y - ball.texture.Height;
+                ball.pos.X = platform_pos.X + platform.Width / 2 - ball.texture.Width / 2;
             }
             else
             {
                 //Wall collisions
-                if(ball_pos.X <= 0 && ballangle < 0)
+                if(ball.pos.X <= 0 && ball.ballangle < 0)
                 {
-                    doXinv = true;
+                    ball.doXinv = true;
                 }
-                else if((ball_pos.X + ball.Width) >= graphics.GraphicsDevice.Viewport.Width && ballangle > 0)
+                else if((ball.pos.X + ball.texture.Width) >= graphics.GraphicsDevice.Viewport.Width && ball.ballangle > 0)
                 {
-                    doXinv = true;
+                    ball.doXinv = true;
                 }
 
                 //Ceiling collision
-                if (ball_pos.Y <= 0 && !yinv) doYinv = true;
+                if (ball.pos.Y <= 0 && !ball.yinv) ball.doYinv = true;
 
                 //Platform collision
-                if ((ball_pos.Y + ball.Height) >= platform_pos.Y) //if ball on same y level as platform
+                if ((ball.pos.Y + ball.texture.Height) >= platform_pos.Y) //if ball on same y level as platform
                 {
-                    if ((ball_pos.X + (ball.Width / 2)) >= platform_pos.X && (ball_pos.X + (ball.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
+                    if ((ball.pos.X + (ball.texture.Width / 2)) >= platform_pos.X && (ball.pos.X + (ball.texture.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
                     {
-                        yinv = false;
-                        int ballpos = (((int)(ball_pos.X + (ball.Width / 2)) - (int)platform_pos.X));
+                        ball.yinv = false;
+                        int ballpos = (((int)(ball.pos.X + (ball.texture.Width / 2)) - (int)platform_pos.X));
                         double impactscore = ballpos * (200 / (float)platform.Width);
                         impactscore -= 100;
-                        ballangle = (float)impactscore / 100;
-                        debug = "impactscore = " + impactscore + "; angle = " + ballangle + "; ballpos = " + ballpos;
+                        ball.ballangle = (float)impactscore / 100;
+                        debug = "impactscore = " + impactscore + "; angle = " + ball.ballangle + "; ballpos = " + ballpos;
 
                         //Controller Rumble
                         if (!is_gameover) startrumble();
@@ -247,46 +230,46 @@ namespace Breakout
                 //Basic Ball movement
                 //TODO check for consistent ball speed
                 float xmv, ymv;
-                xmv = (ballangle * 2) * basespeed;
-                if (ballangle < 0) ymv = (-2 - (ballangle * 2)) * basespeed;
-                else ymv = (-2 - (ballangle * -2)) * basespeed;
-                ball_pos.X += xmv;
-                if (yinv) ball_pos.Y += (ymv * -1);
-                else ball_pos.Y += ymv;
+                xmv = (ball.ballangle * 2) * basespeed;
+                if (ball.ballangle < 0) ymv = (-2 - (ball.ballangle * 2)) * basespeed;
+                else ymv = (-2 - (ball.ballangle * -2)) * basespeed;
+                ball.pos.X += xmv;
+                if (ball.yinv) ball.pos.Y += (ymv * -1);
+                else ball.pos.Y += ymv;
 
                 //Brick collision
                 for (int i = 0; i < bricks.Length; i++)
                 {
                     if (bricks[i].active)
                     {
-                        if (ball_pos.X < bricks[i].position.X + bricks[i].size.X && ball_pos.X + ball.Width > bricks[i].position.X) // Check for X match
-                            if (ball_pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball_pos.Y + ball.Height > bricks[i].position.Y) // Check for Y match
+                        if (ball.pos.X < bricks[i].position.X + bricks[i].size.X && ball.pos.X + ball.texture.Width > bricks[i].position.X) // Check for X match
+                            if (ball.pos.Y < bricks[i].position.Y + bricks[i].size.Y && ball.pos.Y + ball.texture.Height > bricks[i].position.Y) // Check for Y match
                             {
                                 Vector2 relDist;
                                 bricks[i].active = false;
-                                if (ballangle == 0) /* Ball move Straight up (or down I think) */
+                                if (ball.ballangle == 0) /* Ball move Straight up (or down I think) */
                 {
-                    doYinv = true;
+                    ball.doYinv = true;
                                 }
-                                else if (ballangle > 0) /* Ball moves left to right */
+                                else if (ball.ballangle > 0) /* Ball moves left to right */
                                 {
-                                    if (!yinv) /* Ball moves upwards */ /* TODO Fix */
+                                    if (!ball.yinv) /* Ball moves upwards */ /* TODO Fix */
                                     {
-                                        relDist = calcRelDist(new Vector2((ball_pos.X + ball.Width), ball_pos.Y), new Vector2(bricks[i].position.X, (bricks[i].position.Y + bricks[i].size.Y)));
+                                        relDist = calcRelDist(new Vector2((ball.pos.X + ball.texture.Width), ball.pos.Y), new Vector2(bricks[i].position.X, (bricks[i].position.Y + bricks[i].size.Y)));
                                     }
                                     else /* Ball moves downwards */
                                     {
-                                        relDist = calcRelDist(new Vector2((ball_pos.X + ball.Width), (ball_pos.Y + ball.Height)), new Vector2(bricks[i].position.X, bricks[i].position.Y));
+                                        relDist = calcRelDist(new Vector2((ball.pos.X + ball.texture.Width), (ball.pos.Y + ball.texture.Height)), new Vector2(bricks[i].position.X, bricks[i].position.Y));
                                     }
 
 
                                     if (relDist.X < relDist.Y)
                                     {
-                                        doXinv = true;
+                                        ball.doXinv = true;
                                     }
                                     else
                                     {
-                                        doYinv = true;
+                                        ball.doYinv = true;
                                     }
 
 
@@ -294,22 +277,22 @@ namespace Breakout
 
                                 else /* Ball moves right to left */
                                 {
-                                    if (yinv) /* Ball moves upwards */
+                                    if (ball.yinv) /* Ball moves upwards */
                                     {
-                                        relDist = calcRelDist(ball_pos, new Vector2((bricks[i].position.X + bricks[i].size.X), (bricks[i].position.Y + bricks[i].size.Y)));
+                                        relDist = calcRelDist(ball.pos, new Vector2((bricks[i].position.X + bricks[i].size.X), (bricks[i].position.Y + bricks[i].size.Y)));
                                     }
                                     else /* Ball moves downwards */
                                     {
-                                        relDist = calcRelDist(new Vector2((ball_pos.X), (ball_pos.Y + ball.Width)), new Vector2((bricks[i].position.X + bricks[i].size.X), bricks[i].position.Y));
+                                        relDist = calcRelDist(new Vector2((ball.pos.X), (ball.pos.Y + ball.texture.Width)), new Vector2((bricks[i].position.X + bricks[i].size.X), bricks[i].position.Y));
                                     }
 
                                     if (relDist.X < relDist.Y)
                                     {
-                                        doXinv = true;
+                                        ball.doXinv = true;
                                     }
                                     else
                                     {
-                                        doYinv = true;
+                                        ball.doYinv = true;
                                     }
 
                                 }
@@ -319,7 +302,7 @@ namespace Breakout
                 }
 
 
-                if (checkGameOver(ball_pos.Y))
+                if (checkGameOver(ball.pos.Y))
                 {
                     basespeed = 0;
                     is_gameover = true;
@@ -331,7 +314,7 @@ namespace Breakout
             checkrumble();
 
             /* Execute Ball Movement Changes */
-            execBallDirChange(doXinv,doYinv);
+            execBallDirChange(ball.doXinv,ball.doYinv);
 
             base.Update(gameTime);
         }
@@ -342,7 +325,7 @@ namespace Breakout
 
             spriteBatch.Begin();
             spriteBatch.Draw(platform, platform_pos);
-            spriteBatch.Draw(ball, ball_pos);
+            spriteBatch.Draw(ball.texture, ball.pos);
 
             for (int i = 0; i < bricks.Length; i++)
             {
@@ -404,25 +387,15 @@ namespace Breakout
             }
         }
 
-        private void invertX()
-        {
-            ballangle *= -1;
-        }
-
-        private void invertY()
-        {
-            yinv = !yinv;
-        }
-
         private Vector2 calcRelDist(Vector2 point, Vector2 pointBrick) /* calculate relative distance between two points (for brick collision) */
         {
             float tmpangle;
             Vector2 dist;
             Vector2 relAngle;
 
-            /* set temporary ballangle */
-            if (ballangle < 0) tmpangle = ballangle * -1; /* if ball moves Right to Left */
-            else tmpangle = ballangle; /* if ball moves Left to Right */
+            /* set temporary ball.ballangle */
+            if (ball.ballangle < 0) tmpangle = ball.ballangle * -1; /* if ball moves Right to Left */
+            else tmpangle = ball.ballangle; /* if ball moves Left to Right */
 
             /* calculate relative angle */
 
@@ -430,12 +403,12 @@ namespace Breakout
             relAngle.Y = tmpangle; /* % of movement speed horizontal */
 
             /* left to right */
-            if(ballangle>0) dist.X = (point.X - pointBrick.X) * relAngle.X;
+            if(ball.ballangle>0) dist.X = (point.X - pointBrick.X) * relAngle.X;
             else dist.X = (pointBrick.X - point.X) * relAngle.X;
 
             /* down to up */
             /* TODO Fix it better. */
-            if(!yinv) dist.Y = (pointBrick.Y - point.Y) * relAngle.Y;
+            if(!ball.yinv) dist.Y = (pointBrick.Y - point.Y) * relAngle.Y;
             else dist.Y = (point.Y - pointBrick.Y) * relAngle.Y;
 
             return dist;
@@ -445,12 +418,12 @@ namespace Breakout
         {
             if (doXinv)
             {
-                invertX();
+                ball.invertX();
             }
 
             if (doYinv)
             {
-                invertY();
+                ball.invertY();
             }
         }
 
