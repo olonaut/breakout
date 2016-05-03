@@ -19,6 +19,7 @@
 */
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -51,6 +52,8 @@ namespace Breakout
 
         private bool is_gameover;
         private SpriteFont font_gameover;
+
+        private SoundEffect brickHit, platformHit, wallHit;
 
         /* Save current time for controller rumble handler */
         static DateTime startRumble;
@@ -104,6 +107,13 @@ namespace Breakout
                 {
                     bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColors[_rows]);
                 }
+
+            /* Load Sound Effects */
+            wallHit = Content.Load<SoundEffect>("snd/wallHit");
+            brickHit = Content.Load<SoundEffect>("snd/brickHit");
+            platformHit = Content.Load<SoundEffect>("snd/platformHit");
+
+
         }
 
         protected override void UnloadContent()
@@ -201,14 +211,20 @@ namespace Breakout
                 if(ball.pos.X <= 0 && ball.ballangle < 0)
                 {
                     ball.doXinv = true;
+                    wallHit.Play();
                 }
                 else if((ball.pos.X + ball.texture.Width) >= graphics.GraphicsDevice.Viewport.Width && ball.ballangle > 0)
                 {
                     ball.doXinv = true;
+                    wallHit.Play();
                 }
 
                 //Ceiling collision
-                if (ball.pos.Y <= 0 && !ball.yinv) ball.doYinv = true;
+                if (ball.pos.Y <= 0 && !ball.yinv)
+                {
+                    ball.doYinv = true;
+                    wallHit.Play();
+                }
 
                 //Platform collision
                 if ((ball.pos.Y + ball.texture.Height) >= platform_pos.Y) //if ball on same y level as platform
@@ -222,8 +238,15 @@ namespace Breakout
                         ball.ballangle = (float)impactscore / 100;
                         debug = "impactscore = " + impactscore + "; angle = " + ball.ballangle + "; ballpos = " + ballpos;
 
-                        //Controller Rumble
-                        if (!is_gameover) startrumble();
+                       
+                        if (!is_gameover)
+                        {
+                            startrumble(); /* Controller Rumble */
+                            platformHit.Play();/* Play Sound Effect */
+
+                        }
+
+                        
                     }
                 }
 
@@ -247,9 +270,10 @@ namespace Breakout
                             {
                                 Vector2 relDist;
                                 bricks[i].active = false;
+                                brickHit.Play();
                                 if (ball.ballangle == 0) /* Ball move Straight up (or down I think) */
-                {
-                    ball.doYinv = true;
+                                {
+                                    ball.doYinv = true;
                                 }
                                 else if (ball.ballangle > 0) /* Ball moves left to right */
                                 {
