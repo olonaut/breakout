@@ -17,6 +17,6 @@ Planned are:
 ##"Maybe if I have time" modular features:
 * __(Implemented)__ Controller Support (Please help test this)
 * __(Implemented)__ Haptic feedback
-* __(Missing)__ Sound
+* __(Implemented, Testing)__ Sound
 * __(Missing)__ Powerups
 * __(Missing)__ Three lives
