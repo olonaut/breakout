@@ -53,7 +53,7 @@ namespace Breakout
         private bool is_gameover;
         private SpriteFont font_gameover;
 
-        private SoundEffect brickHit, platformHit, wallHit;
+        private SoundHandler sound;
 
         /* Save current time for controller rumble handler */
         static DateTime startRumble;
@@ -70,7 +70,7 @@ namespace Breakout
             brickammount = 9; // per row
             rows = 5;
             basespeed = 6;
-            debug = "debug loading";
+            debug = "DEBUG";
             is_gameover = false;
             totalbricks = rows * brickammount;
 
@@ -78,6 +78,8 @@ namespace Breakout
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
             ball = new Ball();
             brickColors = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
+
+            sound = new SoundHandler();
 
             base.Initialize();
         }
@@ -108,11 +110,7 @@ namespace Breakout
                     bricks[i+(_rows*brickammount)] = new Brick(graphics, new Vector2((85 * i) + (5 * i), (20 * _rows)), new Vector2(85, 15), brickColors[_rows]);
                 }
 
-            /* Load Sound Effects */
-            wallHit = Content.Load<SoundEffect>("snd/wallHit");
-            brickHit = Content.Load<SoundEffect>("snd/brickHit");
-            platformHit = Content.Load<SoundEffect>("snd/platformHit");
-
+            sound.loadSounds(Content);
 
         }
 
@@ -121,6 +119,7 @@ namespace Breakout
             platform.Dispose();
             ball.texture.Dispose();
             for (int i = 0; i < bricks.Length - 1; i++) bricks[i].Dispose();
+            sound.unloadSounds();
         }
 
         protected override void Update(GameTime gameTime)
@@ -211,19 +210,19 @@ namespace Breakout
                 if(ball.pos.X <= 0 && ball.ballangle < 0)
                 {
                     ball.doXinv = true;
-                    wallHit.Play();
+                    sound.playWallHit();
                 }
                 else if((ball.pos.X + ball.texture.Width) >= graphics.GraphicsDevice.Viewport.Width && ball.ballangle > 0)
                 {
                     ball.doXinv = true;
-                    wallHit.Play();
+                    sound.playWallHit();
                 }
 
                 //Ceiling collision
                 if (ball.pos.Y <= 0 && !ball.yinv)
                 {
                     ball.doYinv = true;
-                    wallHit.Play();
+                    sound.playWallHit();
                 }
 
                 //Platform collision
@@ -236,13 +235,13 @@ namespace Breakout
                         double impactscore = ballpos * (200 / (float)platform.Width);
                         impactscore -= 100;
                         ball.ballangle = (float)impactscore / 100;
-                        debug = "impactscore = " + impactscore + "; angle = " + ball.ballangle + "; ballpos = " + ballpos;
+//                      debug = "impactscore = " + impactscore + "; angle = " + ball.ballangle + "; ballpos = " + ballpos;
 
                        
                         if (!is_gameover)
                         {
                             startrumble(); /* Controller Rumble */
-                            platformHit.Play();/* Play Sound Effect */
+                            sound.playPlatformHit(); /* Play Sound Effect */
 
                         }
 
@@ -270,7 +269,7 @@ namespace Breakout
                             {
                                 Vector2 relDist;
                                 bricks[i].active = false;
-                                brickHit.Play();
+                                sound.playBrickHit();
                                 if (ball.ballangle == 0) /* Ball move Straight up (or down I think) */
                                 {
                                     ball.doYinv = true;
@@ -434,6 +433,8 @@ namespace Breakout
             /* TODO Fix it better. */
             if(!ball.yinv) dist.Y = (pointBrick.Y - point.Y) * relAngle.Y;
             else dist.Y = (point.Y - pointBrick.Y) * relAngle.Y;
+
+            debug = "DIST = " + dist;
 
             return dist;
         }
