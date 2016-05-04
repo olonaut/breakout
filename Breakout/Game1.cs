@@ -298,7 +298,7 @@ namespace Breakout
 
                                 else /* Ball moves right to left */
                                 {
-                                    if (ball.yinv) /* Ball moves upwards */
+                                    if (!ball.yinv) /* Ball moves upwards */
                                     {
                                         relDist = calcRelDist(ball.pos, new Vector2((bricks[i].position.X + bricks[i].size.X), (bricks[i].position.Y + bricks[i].size.Y)));
                                     }
