@@ -66,15 +66,15 @@ namespace Breakout
 
         protected override void Initialize()
         {
-            // values
-            brickammount = 9; // per row
+            /* values */
+            brickammount = 9; /* per row */
             rows = 5;
             basespeed = 6;
             debug = "DEBUG";
             is_gameover = false;
             totalbricks = rows * brickammount;
 
-            //Sizes and settings
+            /* Sizes and settings */
             platform_pos = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 64, graphics.GraphicsDevice.Viewport.Height - 16);
             ball = new Ball();
             brickColors = new Color[] { Color.Black, Color.Red, Color.Blue, Color.Green, Color.Orange };
@@ -86,21 +86,21 @@ namespace Breakout
 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
+            /* Create a new SpriteBatch, which can be used to draw textures. */
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //Load Textures
+            /* Load Textures */
             platform = this.Content.Load<Texture2D>("platform_128");
             System.Diagnostics.Debug.WriteLine("platform dimensions: " + platform.Width + "," + platform.Height);
 
-            //Load Ball Data
+            /* Load Ball Data */
             ball.loadTexture(graphics.GraphicsDevice, Color.Black);
 
-            //Load Fonts
+            /* Load Fonts */
             font = Content.Load<SpriteFont>("NewSpriteFont");
             font_gameover = Content.Load<SpriteFont>("font_gameover");
 
-            //Create Bricks
+            /* Create Bricks */
             bricks = new Brick[totalbricks];
 
             for (int _rows = 0; _rows < rows; _rows++)
@@ -179,7 +179,7 @@ namespace Breakout
                 if (platform_pos.X + platform.Width < graphics.GraphicsDevice.Viewport.Width) if (padstate.Buttons.RightShoulder == ButtonState.Pressed) platform_pos.X += 10;
             }
 
-            //Reset
+            /* Reset */
             if (padstate.Buttons.Start == ButtonState.Pressed || kbstate.IsKeyDown(Keys.Enter))
             {
                 ball.isstuck = true;
@@ -188,24 +188,24 @@ namespace Breakout
                 basespeed = 6;
             }
 
-            //Check for unstuck
+            /* Check for unstuck */
             if (ball.isstuck)
-                if (kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) //Space on keyboard or Button A on the GamePad unstucks ball
+                if (kbstate.IsKeyDown(Keys.Space) | padstate.Buttons.A == ButtonState.Pressed) /* Space on keyboard or Button A on the GamePad unstucks ball */
                 {
                     ball.isstuck = false;
-                    ball.ballangle = 0f; //Ball will initially move straight upwards.
+                    ball.ballangle = 0f; /* Ball will initially move straight upwards. */
                 }
 
-            //Ball Stick thing
-            if (ball.isstuck) // Ball Position is being constantly updated and set according to the platform position.
+            /* Ball Stick thing */
+            if (ball.isstuck) /* Ball Position is being constantly updated and set according to the platform position. */
             {
                 ball.pos.Y = platform_pos.Y - ball.texture.Height;
                 ball.pos.X = platform_pos.X + platform.Width / 2 - ball.texture.Width / 2;
             }
             else
             {
-                //Wall collisions
-                if(ball.pos.X <= 0 && ball.ballangle < 0)
+                /* Wall collisions */
+                if (ball.pos.X <= 0 && ball.ballangle < 0)
                 {
                     ball.doXinv = true;
                     sound.playWallHit();
@@ -216,15 +216,15 @@ namespace Breakout
                     sound.playWallHit();
                 }
 
-                //Ceiling collision
+                /* Ceiling collision */
                 if (ball.pos.Y <= 0 && !ball.yinv)
                 {
                     ball.doYinv = true;
                     sound.playWallHit();
                 }
 
-                //Platform collision
-                if ((ball.pos.Y + ball.texture.Height) >= platform_pos.Y) //if ball on same y level as platform
+                /* Platform collision */
+                if ((ball.pos.Y + ball.texture.Height) >= platform_pos.Y) /* if ball on same y level as platform */
                 {
                     if ((ball.pos.X + (ball.texture.Width / 2)) >= platform_pos.X && (ball.pos.X + (ball.texture.Width / 2)) <= platform_pos.X + platform.Width) //if bottom center of ball on same X level as platform
                     {
@@ -233,7 +233,6 @@ namespace Breakout
                         double impactscore = ballpos * (200 / (float)platform.Width);
                         impactscore -= 100;
                         ball.ballangle = (float)impactscore / 100;
-//                      debug = "impactscore = " + impactscore + "; angle = " + ball.ballangle + "; ballpos = " + ballpos;
 
                        
                         if (!is_gameover)
@@ -247,8 +246,8 @@ namespace Breakout
                     }
                 }
 
-                //Basic Ball movement
-                //TODO check for consistent ball speed
+                /* Basic Ball movement */
+                /* TODO check for consistent ball speed */
                 float xmv, ymv;
                 xmv = (ball.ballangle * 2) * basespeed;
                 if (ball.ballangle < 0) ymv = (-2 - (ball.ballangle * 2)) * basespeed;
@@ -257,7 +256,7 @@ namespace Breakout
                 if (ball.yinv) ball.pos.Y += (ymv * -1);
                 else ball.pos.Y += ymv;
 
-                //Brick collision
+                /* Brick collision */
                 for (int i = 0; i < bricks.Length; i++)
                 {
                     if (bricks[i].active)
