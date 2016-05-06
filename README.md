@@ -18,5 +18,5 @@ Roadmap:
 * __(Implemented)__ Controller Support (Please help test this)
 * __(Implemented)__ Haptic feedback
 * __(Implemented, Testing)__ Sound
-* __(Planned, v1.3)__ Powerups and Handicaps
-* __(Planned, v1.4)__ Three lives
+* __(Planned, v1.4)__ Powerups and Handicaps
+* __(Planned, v1.5)__ Three lives
